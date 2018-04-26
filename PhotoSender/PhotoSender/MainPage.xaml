@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:PhotoSender"
+             x:Class="PhotoSender.MainPage">
+    <ContentPage.Padding>
+        <OnPlatform x:TypeArguments="Thickness">
+            <On Platform="UWP" Value="10, 10, 10, 10" />
+        </OnPlatform>
+    </ContentPage.Padding>
+    <ContentPage.Content>
+        <StackLayout x:Name="slSignIn" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+            <Label Text="Access Token" HorizontalOptions="Start" />
+            <Editor x:Name="tokenView" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" />
+            <Button x:Name="btnSignOut" HorizontalOptions="Center" VerticalOptions="End" Text="Sign Out" Clicked="SignOut" />
+        </StackLayout>
+    </ContentPage.Content>
+
+</ContentPage>
