@@ -277,9 +277,46 @@ Let's take a quick look at what we did here.
 
 You should be able to run the app and log in, view the access token, and log out.
 
-![A screenshot of the sign in screen](read-me-images/sign-in-screen.PNG)
+![A screenshot of the sign in screen](readme-images/sign-in-screen.PNG)
 
-![A screenshot of the main page showing the access token]()
+![A screenshot of the main page showing the access token](readme-images/main-page-token.PNG)
+
+## Set up the Graph client
+
+Now that we can sign in and get an access token, we can make our first Graph calls. Let's start by adding a static `GraphServiceClient` to the `App` class.
+
+1. In **Solution Explorer**, expand the **PhotoSender** project, then expand the **App.xaml** file, and then open **App.xaml.cs**.
+1. Add the following `using` statements to the top of the file:
+
+    ```csharp
+    using Microsoft.Graph;
+    using System.Net.Http.Headers;
+    ```
+
+1. Add the following code to the constructor for the `App` class. Be sure to add this **after** the line that creates the new `PublicClientApplication`.
+
+    ```csharp
+    GraphClient = new GraphServiceClient(new DelegateAuthenticationProvider(
+        async (request) =>
+        {
+            // Get token silently from MSAL
+            var authResult = await PCA.AcquireTokenSilentAsync(AppScopes, PCA.Users.FirstOrDefault());
+
+            // Add the access token to the "Authorization" header
+            request.Headers.Authorization =
+                new AuthenticationHeaderValue("Bearer", authResult.AccessToken);
+        }
+    ));
+    ```
+
+Let's take a quick look at what we did here.
+
+- We add a static `GraphServiceClient` and initialized it with a `DelegateAuthenticationProvider`.
+- In the `DelegateAuthenticationProvider`, we defined a function that the Graph client will call before making every Graph call. In that function, we get a token from the MSAL library and add it as an `Authorization` header on the outgoing HTTP request.
+
+## Get the user's info
+
+
 
 ## Running on Android
 

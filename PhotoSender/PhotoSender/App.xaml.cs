@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Identity.Client;
+using Microsoft.Graph;
+using System.Net.Http.Headers;
 
 using Xamarin.Forms;
 
@@ -16,10 +18,25 @@ namespace PhotoSender
         public static UIParent AuthUiParent = null;
         public static bool PendingAuth = false;
 
+        public static GraphServiceClient GraphClient;
+
         public App ()
         {
             InitializeComponent();
             PCA = new PublicClientApplication(AppId);
+
+            GraphClient = new GraphServiceClient(new DelegateAuthenticationProvider(
+                async (request) =>
+                {
+                    // Get token silently from MSAL
+                    var authResult = await PCA.AcquireTokenSilentAsync(AppScopes, PCA.Users.FirstOrDefault());
+
+                    // Add the access token to the "Authorization" header
+                    request.Headers.Authorization =
+                        new AuthenticationHeaderValue("Bearer", authResult.AccessToken);
+                }
+            ));
+
             MainPage = new SignInPage();
         }
 
