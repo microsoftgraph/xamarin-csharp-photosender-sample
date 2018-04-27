@@ -50,5 +50,18 @@
 	<string>LaunchScreen</string>
 	<key>CFBundleName</key>
 	<string>PhotoSender</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>msal[APP_ID_HERE]</string>
+			</array>
+			<key>CFBundleURLName</key>
+			<string>com.yourcompany.PhotoSender</string>
+			<key>CFBundleURLTypes</key>
+			<string>Editor</string>
+		</dict>
+	</array>
 </dict>
 </plist>

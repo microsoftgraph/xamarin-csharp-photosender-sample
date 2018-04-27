@@ -33,18 +33,21 @@ namespace PhotoSender
 
         protected override async void OnAppearing()
         {
-            try
+            if (!App.PendingAuth)
             {
-                // Try to *silently* get a token
-                // Silent here means without prompting the user to login.
-                // This will only work if we have a previously cached token
-                var result = await App.PCA.AcquireTokenSilentAsync(App.AppScopes,
-                    App.PCA.Users.FirstOrDefault());
+                try
+                {
+                    // Try to *silently* get a token
+                    // Silent here means without prompting the user to login.
+                    // This will only work if we have a previously cached token
+                    var result = await App.PCA.AcquireTokenSilentAsync(App.AppScopes,
+                        App.PCA.Users.FirstOrDefault());
 
-                // Since we're already logged in, proceed to main page
-                await Navigation.PushModalAsync(new NavigationPage(new MainPage()), true);
+                    // Since we're already logged in, proceed to main page
+                    await Navigation.PushModalAsync(new NavigationPage(new MainPage()), true);
+                }
+                catch (MsalUiRequiredException) { }
             }
-            catch (MsalUiRequiredException) { }
         }
 
         async void SignIn(object sender, EventArgs e)
@@ -52,13 +55,16 @@ namespace PhotoSender
             try
             {
                 IsRunning = true;
+                App.PendingAuth = true;
                 var result = await App.PCA.AcquireTokenAsync(App.AppScopes, App.AuthUiParent);
                 IsRunning = false;
+                App.PendingAuth = false;
                 await Navigation.PushModalAsync(new NavigationPage(new MainPage()), true);
             }
             catch (MsalException ex)
             {
                 IsRunning = false;
+                App.PendingAuth = false;
                 await DisplayAlert("Signin Error", ex.Message, "Dismiss");
             }
         }
