@@ -29,7 +29,7 @@ namespace PhotoSender
             }
             catch
             {
-                // Show the sigin UI
+                // Show the signin UI
                 await Navigation.PushModalAsync(new SignInPage(), true);
             }
         }

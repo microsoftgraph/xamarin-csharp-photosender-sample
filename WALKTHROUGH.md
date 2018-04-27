@@ -61,7 +61,225 @@ The first step is to allow the user to sign-in to the app so we can obtain an ac
 
 Copy the value of **Application Id**, we'll need that value later.
 
+### Create the sign-in UI
+
+We'll start by creating a sign-in page for the app.
+
+1. Right-click the **PhotoSender** project in **Solution Explorer** and choose **Add**, then **New Item...**. Choose **Content Page**, and name the file `SignInPage.xaml`. Click **Add**.
+1. Replace the generated code with the following.
+
+    ```xml
+    <?xml version="1.0" encoding="utf-8" ?>
+    <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 x:Class="PhotoSender.SignInPage">
+        <Grid>
+            <ActivityIndicator x:Name="spinner" IsVisible="false" IsRunning="false"
+                               VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Color="Gray"/>
+            <StackLayout x:Name="slSignIn" VerticalOptions="Center" HorizontalOptions="Center">
+                <Label HorizontalOptions="Center" Text="Welcome! Please sign in to get started."></Label>
+                <Button x:Name="btnSignIn" HorizontalOptions="Center" Text="Sign In" Clicked="SignIn"></Button>
+            </StackLayout>
+        </Grid>
+    </ContentPage>
+    ```
+
+This adds a simple prompt and a **Sign In** button. We'll connect an event handler to the button soon, but first, let's setup the MSAL identity client.
+
 ### Set up the identity client
+
+In this step we'll add an instance of the `PublicClientApplication` class as a static member of the `App` class. This will make it available throughout our application.
+
+1. In **Solution Explorer**, expand the **PhotoSender** project, then expand the **App.xaml** file, and then open **App.xaml.cs**.
+1. Add the following `using` statement to the top of the file:
+
+    ```csharp
+    using Microsoft.Identity.Client;
+    ```
+
+1. Add the following members to the `App` class. Replace `[APP ID HERE]` with your app ID from the application registration portal.
+
+    ```csharp
+    public static PublicClientApplication PCA;
+    public static string AppId = "[APP ID HERE]";
+    public static string[] AppScopes = { "User.Read", "Mail.Read", "Mail.Send", "Files.ReadWrite" };
+    public static UIParent AuthUiParent = null;
+    public static bool PendingAuth = false;
+    ```
+
+1. Change the existing constructor for the `App` class to the following:
+
+    ```csharp
+    public App ()
+    {
+        InitializeComponent();
+        PCA = new PublicClientApplication(AppId);
+        MainPage = new SignInPage();
+    }
+    ```
+
+Let's take a quick look at what we did here.
+
+- We setup a static `PublicClientApplication` that is initialized with our application ID.
+- We defined the scopes our app will use:
+  - `User.Read`: this allows us to get information about the logged-in user, including their name, email address, and profile photo.
+  - `Mail.Read`: this allows us to read the user's email messages, which we'll use to get a list of emails our app sends.
+  - `Mail.Send`: this allows us to send mail as the user.
+  - `Files.ReadWrite`: this allows us to upload the user's profile photo to OneDrive.
+
+### Sign in
+
+Now let's add code to the sign in page to do the actual sign in.
+
+1. In **Solution Explorer**, expand the **PhotoSender** project, then expand the **SignInPage.xaml** file, and then open **SignInPage.xaml.cs**.
+1. Add the following `using` statement to the top of the file:
+
+    ```csharp
+    using Microsoft.Identity.Client;
+    ```
+
+1. Add the following properties to the `SignInPage` class:
+
+    ```csharp
+    private bool isRunning = false;
+    public bool IsRunning
+    {
+        get { return isRunning; }
+        set
+        {
+            isRunning = value;
+            slSignIn.IsVisible = !value;
+            spinner.IsVisible = value;
+            spinner.IsRunning = value;
+        }
+    }
+    ```
+
+1. Add the following method to the `SignInPage` class:
+
+    ```csharp
+    protected override async void OnAppearing()
+    {
+        if (!App.PendingAuth)
+        {
+            try
+            {
+                // Try to *silently* get a token
+                // Silent here means without prompting the user to login.
+                // This will only work if we have a previously cached token
+                var result = await App.PCA.AcquireTokenSilentAsync(App.AppScopes,
+                    App.PCA.Users.FirstOrDefault());
+
+                // Since we're already logged in, proceed to main page
+                await Navigation.PushModalAsync(new NavigationPage(new MainPage()), true);
+            }
+            catch (MsalUiRequiredException) { }
+        }
+    }
+    ```
+
+1. Add the following method to the `SignInPage` class:
+
+    ```csharp
+    async void SignIn(object sender, EventArgs e)
+    {
+        try
+        {
+            IsRunning = true;
+            App.PendingAuth = true;
+            var result = await App.PCA.AcquireTokenAsync(App.AppScopes, App.AuthUiParent);
+            IsRunning = false;
+            App.PendingAuth = false;
+            await Navigation.PushModalAsync(new NavigationPage(new MainPage()), true);
+        }
+        catch (MsalException ex)
+        {
+            IsRunning = false;
+            App.PendingAuth = false;
+            await DisplayAlert("Signin Error", ex.Message, "Dismiss");
+        }
+    }
+    ```
+
+Let's take a quick look at what we did here.
+
+- When the sign in page first loads, we check for a cached token. So, for example, if the user ran the app previously and did not sign out, their token is still cached in secure storage on the device. They won't have to login again. If we have a cached token, we navigate to the main page.
+- We added an event handler for the **Sign In** button that does an interactive login. We set `IsRunning` to true to show the activity indicator while we wait for the user to complete the login. Once login is complete, we navigate to the main page.
+
+Now let's update the main page to show the result of the sign in and allow the user to sign out.
+
+1. In **Solution Explorer**, expand the **PhotoSender** project, then open **MainPage.xaml**. Replace the code there with the following code.
+
+    ```xml
+    <?xml version="1.0" encoding="utf-8" ?>
+    <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 xmlns:local="clr-namespace:PhotoSender"
+                 x:Class="PhotoSender.MainPage">
+        <ContentPage.Padding>
+            <OnPlatform x:TypeArguments="Thickness">
+                <On Platform="UWP" Value="10, 10, 10, 10" />
+            </OnPlatform>
+        </ContentPage.Padding>
+        <ContentPage.Content>
+            <ScrollView>
+                <StackLayout x:Name="slSignIn" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                    <Label Text="Access Token" HorizontalOptions="Start" />
+                    <Editor x:Name="tokenView" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" />
+                    <Button x:Name="btnSignOut" HorizontalOptions="Center" VerticalOptions="End" Text="Sign Out" Clicked="SignOut" />
+                </StackLayout>
+            </ScrollView>
+        </ContentPage.Content>
+    </ContentPage>
+    ```
+
+1. In **Solution Explorer**, expand the **PhotoSender** project, then expand the **MainPage.xaml** file, and then open **MainPage.xaml.cs**.
+
+1. Add the following function to the `MainPage` class:
+
+    ```csharp
+    protected override async void OnAppearing()
+    {
+        try
+        {
+            // Try to *silently* get a token
+            // Silent here means without prompting the user to login.
+            // This will only work if we have a previously cached token
+            var result = await App.PCA.AcquireTokenSilentAsync(App.AppScopes,
+                App.PCA.Users.FirstOrDefault());
+
+            tokenView.Text = result.AccessToken;
+        }
+        catch
+        {
+            // Show the signin UI
+            await Navigation.PushModalAsync(new SignInPage(), true);
+        }
+    }
+    ```
+
+1. Add the following function to the `MainPage` class:
+
+    ```csharp
+    async void SignOut(object sender, EventArgs e)
+    {
+        App.PCA.Remove(App.PCA.Users.FirstOrDefault());
+        // Show the sigin UI
+        await Navigation.PushModalAsync(new SignInPage(), true);
+    }
+    ```
+
+Let's take a quick look at what we did here.
+
+- We added temporary UI elements to show the access token and provide a **Sign Out** button.
+- We check for a cached token when the page loads and display it in an editor. If there isn't one, we send the user back to the sign in page.
+- We added an event handler for the **Sign Out** button that removes the user's cached token and returns to the sign in page.
+
+You should be able to run the app and log in, view the access token, and log out.
+
+![A screenshot of the sign in screen](read-me-images/sign-in-screen.PNG)
+
+![A screenshot of the main page showing the access token]()
 
 ## Running on Android
 
@@ -92,19 +310,19 @@ Your manifest should look like this when you're done:
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="com.companyname.PhotoSender" android:installLocation="auto">
-	<uses-sdk android:minSdkVersion="15" />
-	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<application android:label="PhotoSender.Android">
-		<activity android:name="microsoft.identity.client.BrowserTabActivity">
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW" />
-				<category android:name="android.intent.category.DEFAULT" />
-				<category android:name="android.intent.category.BROWSABLE" />
-				<data android:scheme="msal[APP ID HERE]" android:host="auth" />
-			</intent-filter>
-		</activity>
-	</application>
+    <uses-sdk android:minSdkVersion="15" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <application android:label="PhotoSender.Android">
+        <activity android:name="microsoft.identity.client.BrowserTabActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="msal[APP ID HERE]" android:host="auth" />
+            </intent-filter>
+        </activity>
+    </application>
 </manifest>
 ```
 
