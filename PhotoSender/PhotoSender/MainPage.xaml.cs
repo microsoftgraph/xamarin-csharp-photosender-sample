@@ -30,7 +30,7 @@ namespace PhotoSender
             catch
             {
                 // Show the sigin UI
-                await Navigation.PushAsync(new NavigationPage(new SignInPage()));
+                await Navigation.PushModalAsync(new SignInPage(), true);
             }
         }
 
@@ -38,7 +38,7 @@ namespace PhotoSender
         {
             App.PCA.Remove(App.PCA.Users.FirstOrDefault());
             // Show the sigin UI
-            await Navigation.PushAsync(new NavigationPage(new SignInPage()));
+            await Navigation.PushModalAsync(new SignInPage(), true);
         }
     }
 }

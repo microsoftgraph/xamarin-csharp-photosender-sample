@@ -19,7 +19,7 @@ namespace PhotoSender
         {
             InitializeComponent();
             PCA = new PublicClientApplication(AppId);
-            MainPage = new NavigationPage(new SignInPage());
+            MainPage = new SignInPage();
         }
 
         protected override void OnStart ()

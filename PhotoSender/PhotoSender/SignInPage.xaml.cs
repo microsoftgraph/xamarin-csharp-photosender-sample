@@ -13,6 +13,19 @@ namespace PhotoSender
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SignInPage : ContentPage
     {
+        private bool isRunning = false;
+        public bool IsRunning 
+        {
+            get { return isRunning; }
+            set 
+            {
+                isRunning = value;
+                slSignIn.IsVisible = !value;
+                spinner.IsVisible = value;
+                spinner.IsRunning = value;
+            }
+        }
+
         public SignInPage ()
         {
             InitializeComponent ();
@@ -29,21 +42,23 @@ namespace PhotoSender
                     App.PCA.Users.FirstOrDefault());
 
                 // Since we're already logged in, proceed to main page
-                await Navigation.PushAsync(new NavigationPage(new MainPage()));
+                await Navigation.PushModalAsync(new NavigationPage(new MainPage()), true);
             }
-            catch (MsalUiRequiredException) {}
+            catch (MsalUiRequiredException) { }
         }
 
         async void SignIn(object sender, EventArgs e)
         {
             try
             {
+                IsRunning = true;
                 var result = await App.PCA.AcquireTokenAsync(App.AppScopes, App.AuthUiParent);
-
-                await Navigation.PushAsync(new NavigationPage(new MainPage()));
+                IsRunning = false;
+                await Navigation.PushModalAsync(new NavigationPage(new MainPage()), true);
             }
             catch (MsalException ex)
             {
+                IsRunning = false;
                 await DisplayAlert("Signin Error", ex.Message, "Dismiss");
             }
         }
