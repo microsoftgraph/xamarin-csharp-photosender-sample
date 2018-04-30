@@ -38,11 +38,14 @@ namespace PhotoSender
                 lblUserName.Text = user.DisplayName;
                 lblUserEmail.Text = user.Mail;
 
+                // Get the user's profile photo
                 var photoStream = await GetUserPhoto();
                 imgProfilePhoto.Source = ImageSource.FromStream(() => photoStream);
 
                 // Get user's relevant people
-                var recipients = await App.GraphClient.Me.People.Request().GetAsync();
+                var recipients = await App.GraphClient.Me.People.Request()
+                    .Filter("personType/subclass eq 'OrganizationUser'")
+                    .GetAsync();
                 recipientList = recipients.ToList();
                 pickerRecipient.ItemsSource = recipientList;
                 pickerRecipient.ItemDisplayBinding = new Binding("DisplayName");
