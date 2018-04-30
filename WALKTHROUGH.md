@@ -99,6 +99,7 @@ In this step we'll add an instance of the `PublicClientApplication` class as a s
 
     ```csharp
     using Microsoft.Identity.Client;
+    using Microsoft.Graph;
     ```
 
 1. Add the following members to the `App` class. Replace `[APP ID HERE]` with your app ID from the application registration portal.
@@ -109,6 +110,7 @@ In this step we'll add an instance of the `PublicClientApplication` class as a s
     public static string[] AppScopes = { "User.Read", "Mail.Read", "Mail.Send", "Files.ReadWrite", "People.Read" };
     public static UIParent AuthUiParent = null;
     public static bool PendingAuth = false;
+    public static GraphServiceClient GraphClient;
     ```
 
 1. Change the existing constructor for the `App` class to the following:
@@ -509,7 +511,7 @@ In `OnAppearing`, add the following code just after the `imgProfilePhoto.Source 
 var recipients = await App.GraphClient.Me.People.Request()
     .Filter("personType/subclass eq 'OrganizationUser'")
     .GetAsync();
-recipientList = recipients.ToList();
+var recipientList = recipients.ToList();
 pickerRecipient.ItemsSource = recipientList;
 pickerRecipient.ItemDisplayBinding = new Binding("DisplayName");
 ```
