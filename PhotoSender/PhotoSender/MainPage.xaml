@@ -9,33 +9,43 @@
         </OnPlatform>
     </ContentPage.Padding>
     <ContentPage.Content>
-        <ScrollView>
-            <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                <Grid HorizontalOptions="FillAndExpand">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Image x:Name="imgProfilePhoto" HorizontalOptions="Center" VerticalOptions="Center" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2">
-                        <Image.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnPhotoTapped"/>
-                        </Image.GestureRecognizers>
-                    </Image>
-                    <Label HorizontalOptions="Center" Text="Tap to change" Grid.Row="1" Grid.Column="0" TextColor="White" />
-                    <StackLayout HorizontalOptions="Start" VerticalOptions="Center" Grid.Row="0" Grid.Column="1">
-                        <StackLayout.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnUserTapped"/>
-                        </StackLayout.GestureRecognizers>
-                        <Label x:Name="lblUserName" Text="" HorizontalOptions="Start" />
-                        <Label x:Name="lblUserEmail" Text="" HorizontalOptions="Start" />
-                        <Label Text="(Tap to sign out)" HorizontalOptions="Start" />
-                    </StackLayout>
-                </Grid>
+        <Grid>
+            <StackLayout x:Name="progressIndicator" IsVisible="false">
+                <ActivityIndicator x:Name="spinner"  IsRunning="false"
+                    VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Color="Gray"/>
+                <Label x:Name="progressMessage" HorizontalOptions="Center" Text="Busy" />
             </StackLayout>
-        </ScrollView>
+            <ScrollView x:Name="mainView" IsVisible="True">
+                <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                    <Grid HorizontalOptions="FillAndExpand">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Image x:Name="imgProfilePhoto" HorizontalOptions="Center" VerticalOptions="Center" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2">
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnPhotoTapped"/>
+                            </Image.GestureRecognizers>
+                        </Image>
+                        <Label HorizontalOptions="Center" Text="Tap to change" Grid.Row="1" Grid.Column="0" TextColor="White" />
+                        <StackLayout HorizontalOptions="Start" VerticalOptions="Center" Grid.Row="0" Grid.Column="1">
+                            <StackLayout.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnUserTapped"/>
+                            </StackLayout.GestureRecognizers>
+                            <Label x:Name="lblUserName" Text="" HorizontalOptions="Start" />
+                            <Label x:Name="lblUserEmail" Text="" HorizontalOptions="Start" />
+                            <Label Text="(Tap to sign out)" HorizontalOptions="Start" />
+                        </StackLayout>
+                    </Grid>
+                    <Label Text="This app will upload your profile photo to your OneDrive, then email the photo to a recipient of your choice." FontAttributes="Bold" FontSize="Medium" Margin="0,10,0,10"/>
+                    <Picker x:Name="pickerRecipient" Title="Choose a recipient" SelectedIndexChanged="OnRecipientSelected"/>
+                    <Button x:Name="btnSend" Text="Send" IsEnabled="False" Clicked="SendMail" />
+                </StackLayout>
+            </ScrollView>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>
