@@ -10,10 +10,31 @@
     </ContentPage.Padding>
     <ContentPage.Content>
         <ScrollView>
-            <StackLayout x:Name="slSignIn" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                <Label Text="Access Token" HorizontalOptions="Start" />
-                <Editor x:Name="tokenView" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" />
-                <Button x:Name="btnSignOut" HorizontalOptions="Center" VerticalOptions="End" Text="Sign Out" Clicked="SignOut" />
+            <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <Grid HorizontalOptions="FillAndExpand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Image x:Name="imgProfilePhoto" HorizontalOptions="Center" VerticalOptions="Center" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnPhotoTapped"/>
+                        </Image.GestureRecognizers>
+                    </Image>
+                    <Label HorizontalOptions="Center" Text="Tap to change" Grid.Row="1" Grid.Column="0" TextColor="White" />
+                    <StackLayout HorizontalOptions="Start" VerticalOptions="Center" Grid.Row="0" Grid.Column="1">
+                        <StackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnUserTapped"/>
+                        </StackLayout.GestureRecognizers>
+                        <Label x:Name="lblUserName" Text="" HorizontalOptions="Start" />
+                        <Label x:Name="lblUserEmail" Text="" HorizontalOptions="Start" />
+                        <Label Text="(Tap to sign out)" HorizontalOptions="Start" />
+                    </StackLayout>
+                </Grid>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

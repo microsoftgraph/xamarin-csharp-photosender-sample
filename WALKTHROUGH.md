@@ -27,7 +27,7 @@ Visual Studio will create three projects in the solution:
 
 Wait for Visual Studio to finish creating the projects before moving on to the next section.
 
-## Install NuGet packages
+## Install and update NuGet packages
 
 Next let's install the following NuGet packages.
 
@@ -223,7 +223,7 @@ Now let's update the main page to show the result of the sign in and allow the u
         </ContentPage.Padding>
         <ContentPage.Content>
             <ScrollView>
-                <StackLayout x:Name="slSignIn" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
                     <Label Text="Access Token" HorizontalOptions="Start" />
                     <Editor x:Name="tokenView" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" />
                     <Button x:Name="btnSignOut" HorizontalOptions="Center" VerticalOptions="End" Text="Sign Out" Clicked="SignOut" />
@@ -250,7 +250,7 @@ Now let's update the main page to show the result of the sign in and allow the u
 
             tokenView.Text = result.AccessToken;
         }
-        catch
+        catch (MsalException)
         {
             // Show the signin UI
             await Navigation.PushModalAsync(new SignInPage(), true);
