@@ -13,8 +13,6 @@ namespace PhotoSender
 {
     public partial class MainPage : ContentPage
     {
-        private List<Person> recipientList;
-
         public MainPage()
         {
             InitializeComponent();
@@ -46,7 +44,7 @@ namespace PhotoSender
                 var recipients = await App.GraphClient.Me.People.Request()
                     .Filter("personType/subclass eq 'OrganizationUser'")
                     .GetAsync();
-                recipientList = recipients.ToList();
+                var recipientList = recipients.ToList();
                 pickerRecipient.ItemsSource = recipientList;
                 pickerRecipient.ItemDisplayBinding = new Binding("DisplayName");
             }

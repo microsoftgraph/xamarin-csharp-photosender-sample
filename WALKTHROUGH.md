@@ -100,6 +100,7 @@ In this step we'll add an instance of the `PublicClientApplication` class as a s
     ```csharp
     using Microsoft.Identity.Client;
     using Microsoft.Graph;
+    using System.Net.Http.Headers;
     ```
 
 1. Add the following members to the `App` class. Replace `[APP ID HERE]` with your app ID from the application registration portal.
@@ -297,12 +298,6 @@ You should be able to run the app and log in, view the access token, and log out
 Now that we can sign in and get an access token, we can make our first Graph calls. Let's start by adding a static `GraphServiceClient` to the `App` class.
 
 1. In **Solution Explorer**, expand the **PhotoSender** project, then expand the **App.xaml** file, and then open **App.xaml.cs**.
-1. Add the following `using` statements to the top of the file:
-
-    ```csharp
-    using Microsoft.Graph;
-    using System.Net.Http.Headers;
-    ```
 
 1. Add the following code to the constructor for the `App` class. Be sure to add this **after** the line that creates the new `PublicClientApplication`.
 
