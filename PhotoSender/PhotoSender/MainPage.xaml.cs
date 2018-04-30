@@ -115,12 +115,11 @@ namespace PhotoSender
                     .Content.Request().PutAsync<DriveItem>(new MemoryStream(photoBytes));
 
                 // Generate a sharing link
-
                 UpdateProgress("Generating sharing link");
                 var sharingLink = await App.GraphClient.Me.Drive.Items[uploadedPhoto.Id]
                     .CreateLink("view", "organization").Request().PostAsync();
 
-                // Create the email message
+                // Create a recipient from the selected Person object
                 var selectedRecipient = pickerRecipient.SelectedItem as Person;
 
                 var recipient = new Recipient()
@@ -132,13 +131,11 @@ namespace PhotoSender
                     }
                 };
 
+                // Create the email message
                 var message = new Message()
                 {
                     Subject = "Check out my profile photo",
-                    ToRecipients = new List<Recipient>()
-                {
-                    recipient
-                },
+                    ToRecipients = new List<Recipient>() { recipient },
                     Body = new ItemBody()
                     {
                         ContentType = BodyType.Html

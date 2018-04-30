@@ -13,10 +13,10 @@ In this session, we'll build a cross-platform mobile application that uses the M
 1. Open Visual Studio, then choose the **File** menu, then **New**, then **Project...**.
 
 1. Choose the **Mobile App (Xamarin.Forms)** project template (located under **Visual C#**, **Cross-Platform**). Name the app **PhotoSender** and choose **OK**.
-    ![A screenshot of the New Project dialog with the Mobile App (Xamarin.Forms) template selected](readme-images/select-template.PNG)
+    ![A screenshot of the New Project dialog with the Mobile App (Xamarin.Forms) template selected](https://github.com/microsoftgraph/xamarin-csharp-photosender-sample/blob/master/readme-images/select-template.PNG)
 
 1. Choose the **Blank App** template. Under **Code Sharing Strategy**, select **.NET Standard**. Choose **OK**.
-    ![A screenshot of the New Cross Platform App dialog](readme-images/cross-platform-options.PNG)
+    ![A screenshot of the New Cross Platform App dialog](https://github.com/microsoftgraph/xamarin-csharp-photosender-sample/blob/master/readme-images/cross-platform-options.PNG)
 
 Visual Studio will create three projects in the solution:
 
@@ -26,6 +26,10 @@ Visual Studio will create three projects in the solution:
 - **PhotoSender.UWP** This project implements the Universal Windows Platform version of the application and contains any UWP-specific code.
 
 Wait for Visual Studio to finish creating the projects before moving on to the next section.
+
+> **NOTE:** This lab will only cover the UWP version of the app. You can try the Android or iOS versions on your own machine. Note that Android and iOS versions have [additional system requirements](https://docs.microsoft.com/xamarin/cross-platform/get-started/requirements).
+>
+> If you're aren't interested in the Android or iOS versions, you can uncheck those options when creating the project.
 
 ## Install and update NuGet packages
 
@@ -102,7 +106,7 @@ In this step we'll add an instance of the `PublicClientApplication` class as a s
     ```csharp
     public static PublicClientApplication PCA;
     public static string AppId = "[APP ID HERE]";
-    public static string[] AppScopes = { "User.Read", "Mail.Read", "Mail.Send", "Files.ReadWrite" };
+    public static string[] AppScopes = { "User.Read", "Mail.Read", "Mail.Send", "Files.ReadWrite", "People.Read" };
     public static UIParent AuthUiParent = null;
     public static bool PendingAuth = false;
     ```
@@ -126,6 +130,7 @@ Let's take a quick look at what we did here.
   - `Mail.Read`: this allows us to read the user's email messages, which we'll use to get a list of emails our app sends.
   - `Mail.Send`: this allows us to send mail as the user.
   - `Files.ReadWrite`: this allows us to upload the user's profile photo to OneDrive.
+  - `People.Read`: this allows us to get a list of the people the user interacts with most often.
 
 ### Sign in
 
@@ -263,8 +268,12 @@ Now let's update the main page to show the result of the sign in and allow the u
     ```csharp
     async void SignOut(object sender, EventArgs e)
     {
-        App.PCA.Remove(App.PCA.Users.FirstOrDefault());
-        // Show the sigin UI
+        foreach(var user in App.PCA.Users)
+        {
+            App.PCA.Remove(user);
+        }
+
+        // Show the signin UI
         await Navigation.PushModalAsync(new SignInPage(), true);
     }
     ```
@@ -277,9 +286,9 @@ Let's take a quick look at what we did here.
 
 You should be able to run the app and log in, view the access token, and log out.
 
-![A screenshot of the sign in screen](readme-images/sign-in-screen.PNG)
+![A screenshot of the sign in screen](https://github.com/microsoftgraph/xamarin-csharp-photosender-sample/blob/master/readme-images/sign-in-screen.PNG)
 
-![A screenshot of the main page showing the access token](readme-images/main-page-token.PNG)
+![A screenshot of the main page showing the access token](https://github.com/microsoftgraph/xamarin-csharp-photosender-sample/blob/master/readme-images/main-page-token.PNG)
 
 ## Set up the Graph client
 
@@ -314,104 +323,333 @@ Let's take a quick look at what we did here.
 - We add a static `GraphServiceClient` and initialized it with a `DelegateAuthenticationProvider`.
 - In the `DelegateAuthenticationProvider`, we defined a function that the Graph client will call before making every Graph call. In that function, we get a token from the MSAL library and add it as an `Authorization` header on the outgoing HTTP request.
 
+## Update the UI
+
+Let's replace the temporary UI for the main page with something more useful. Open **MainPage.xaml** and replace the contents with the following.
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:PhotoSender"
+             x:Class="PhotoSender.MainPage">
+    <ContentPage.Padding>
+        <OnPlatform x:TypeArguments="Thickness">
+            <On Platform="UWP" Value="10, 10, 10, 10" />
+        </OnPlatform>
+    </ContentPage.Padding>
+    <ContentPage.Content>
+        <Grid>
+            <StackLayout x:Name="progressIndicator" IsVisible="false">
+                <ActivityIndicator x:Name="spinner"  IsRunning="false"
+                    VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Color="Gray"/>
+                <Label x:Name="progressMessage" HorizontalOptions="Center" Text="Busy" />
+            </StackLayout>
+            <ScrollView x:Name="mainView" IsVisible="True">
+                <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                    <Grid HorizontalOptions="FillAndExpand">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Image x:Name="imgProfilePhoto" HorizontalOptions="Center" VerticalOptions="Center" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2">
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnPhotoTapped"/>
+                            </Image.GestureRecognizers>
+                        </Image>
+                        <Label HorizontalOptions="Center" Text="Tap to change" Grid.Row="1" Grid.Column="0" TextColor="White" />
+                        <StackLayout HorizontalOptions="Start" VerticalOptions="Center" Grid.Row="0" Grid.Column="1">
+                            <StackLayout.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnUserTapped"/>
+                            </StackLayout.GestureRecognizers>
+                            <Label x:Name="lblUserName" Text="" HorizontalOptions="Start" />
+                            <Label x:Name="lblUserEmail" Text="" HorizontalOptions="Start" />
+                            <Label Text="(Tap to sign out)" HorizontalOptions="Start" />
+                        </StackLayout>
+                    </Grid>
+                    <Label Text="This app will upload your profile photo to your OneDrive, then email the photo to a recipient of your choice." FontAttributes="Bold" FontSize="Medium" Margin="0,10,0,10"/>
+                    <Picker x:Name="pickerRecipient" Title="Choose a recipient" SelectedIndexChanged="OnRecipientSelected"/>
+                    <Button x:Name="btnSend" Text="Send" IsEnabled="False" Clicked="SendMail" />
+                </StackLayout>
+            </ScrollView>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
+```
+
+Now let's update the code for this new UI. Open **MainPage.xaml.cs** and add the following functions to the `MainPage` class:
+
+```csharp
+async void OnUserTapped(object sender, EventArgs e)
+{
+    var signout = await DisplayAlert("Sign out?", "Do you want to sign out?", "Yes", "No");
+    if (signout)
+    {
+        SignOut();
+    }
+}
+
+async void OnPhotoTapped(object sender, EventArgs e)
+{
+    await DisplayAlert("Photo tapped", "TODO: Implement this!", "Got it");
+}
+
+void OnRecipientSelected(object sender, EventArgs e)
+{
+    // Enable the send button
+    btnSend.IsEnabled = true;
+}
+
+async void SendMail(object sender, EventArgs e)
+{
+    await DisplayAlert("SendMail", "TODO: Implement this!", "Got it");
+}
+
+void ShowProgress(string message)
+{
+    progressIndicator.IsVisible = true;
+    mainView.IsVisible = false;
+    spinner.IsRunning = true;
+    progressMessage.Text = message;
+}
+
+void UpdateProgress(string message)
+{
+    progressMessage.Text = message;
+}
+
+void HideProgress()
+{
+    progressMessage.Text = "Busy";
+    spinner.IsRunning = false;
+    progressIndicator.IsVisible = false;
+    mainView.IsVisible = true;
+}
+```
+
+Now let's move on to filling in this new UI with information from the Graph.
+
 ## Get the user's info
 
+Our first task will be to get the user's information and profile photo to fill in the top part of the UI.
 
+1. Add the following function to get the user's photo to the `MainPage` class:
 
-## Running on Android
+    ```csharp
+    async Task<Stream> GetUserPhoto()
+    {
+        // Get the user's profile photo
+        var photo = await App.GraphClient.Me.Photo.Content.Request().GetAsync();
+        if (photo == null)
+        {
+            // Fallback on a placeholder image
+            photo = Assembly.GetExecutingAssembly().GetManifestResourceStream("PhotoSender.no-profile-pic.png");
+        }
 
-MSAL requires additional configuration in the Android project to work properly. This is documented at https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/wiki/Xamarin-android-specificities.
+        return photo;
+    }
+    ```
 
-First, we need to require permissions to the internet. Open **./PhotoSender.Android/Properties/AndroidManifest.xml** and add the following permissions.
+1. Download the **no-profile-pic.png** file from [here](https://github.com/microsoftgraph/xamarin-csharp-photosender-sample/blob/master/PhotoSender/PhotoSender/no-profile-pic.png) and save it in the **./PhotoSender** directory. Right-click the **PhotoSender** project and choose **Add**, **Existing Item...**. Browse to **no-profile-pic.png** and choose **Add**.
 
-```xml
-<uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-```
+1. Right-click **no-profile-pic.png** in **Solution Explorer** and choose **Properties**. Change **Build Action** to `Embedded resource` and choose **OK**.
 
-Next, we need to specify that our app handles the `msal[APP ID HERE]` URL type. When the oAuth login process finishes, it redirects to this URL, and the app needs to receive that redirect. Add the following to the manifest, replacing `[APP ID HERE]` with your app ID from the app registration portal.
+1. In the `OnAppearing` function, remove the line:
 
-```xml
-<activity android:name="microsoft.identity.client.BrowserTabActivity">
-    <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BROWSABLE" />
-        <data android:scheme="msal[APP ID]]" android:host="auth" />
-    </intent-filter>
-</activity>
-```
+    ```csharp
+    tokenView.Text = result.AccessToken;
+    ```
 
-Your manifest should look like this when you're done:
+    Replace it with the following code:
 
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="com.companyname.PhotoSender" android:installLocation="auto">
-    <uses-sdk android:minSdkVersion="15" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <application android:label="PhotoSender.Android">
-        <activity android:name="microsoft.identity.client.BrowserTabActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="msal[APP ID HERE]" android:host="auth" />
-            </intent-filter>
-        </activity>
-    </application>
-</manifest>
-```
+    ```csharp
+    // Get the user's name from the Graph
+    var user = await App.GraphClient.Me.Request()
+        .Select("displayName,mail")
+        .GetAsync();
 
-Finally, we need to add code to the Android app's main activity to set the UI parent for the login flow, and to pass the auth result along to the MSAL library. Open **./PhotoSender.Android/MainActivity.cs** and add the following `using` statement at the top of the file:
+    lblUserName.Text = user.DisplayName;
+    lblUserEmail.Text = user.Mail;
+
+    // Get the user's profile photo
+    var photoStream = await GetUserPhoto();
+    imgProfilePhoto.Source = ImageSource.FromStream(() => photoStream);
+    ```
+
+1. Add a second `catch` to the try/catch in `OnAppearing` to handle exceptions raised by the Graph SDK:
+
+    ```csharp
+    catch (ServiceException ex)
+    {
+        await DisplayAlert("A Graph error occurred", ex.Message, "Dismiss");
+    }
+    ```
+
+Let's take a look at what that does.
+
+- It gets the user from the Graph, requesting the `displayName` and `mail` properties. It then uses that information to fill in the labels for the user's name and email address.
+- It gets the user's profile photo, then sets that as the source for the user's image. Note that if the user does not have a profile photo, the app falls back on an embedded image.
+
+Run the app to test this code. You should get a result something like the following:
+
+![A screenshot of the app](https://github.com/microsoftgraph/xamarin-csharp-photosender-sample/blob/master/readme-images/user-profile-photo.PNG)
+
+## Choosing a recipient
+
+Our next task is to allow the user to pick a recipient for the email message the app will send. To do this, we'll use the [People API in the Graph](https://developer.microsoft.com/en-us/graph/docs/api-reference/v1.0/api/user_list_people). The People API gets a list of the people that the user interacts with, ordered by their relevance to the user. This is determined by their past communications and their business relationship.
+
+In `OnAppearing`, add the following code just after the `imgProfilePhoto.Source = ImageSource.FromStream(() => photoStream);` line:
 
 ```csharp
-using Microsoft.Identity.Client;
+// Get user's relevant people
+var recipients = await App.GraphClient.Me.People.Request()
+    .Filter("personType/subclass eq 'OrganizationUser'")
+    .GetAsync();
+recipientList = recipients.ToList();
+pickerRecipient.ItemsSource = recipientList;
+pickerRecipient.ItemDisplayBinding = new Binding("DisplayName");
 ```
 
-Then add the following function to the `MainActivity` class:
+Let's take a look at this code.
+
+- It gets the user's relevant people, filtered to return only people inside the organization.
+- It uses the resulting list as the source for the `pickerRecipient` control on the page.
+- It maps the display for each item to the `DisplayName` property of the `Person` class.
+
+If you run the app now, you should be able to click the dropdown and see a list of people to choose from.
+
+![A screenshot of the app](https://github.com/microsoftgraph/xamarin-csharp-photosender-sample/blob/master/readme-images/people-picker.PNG)
+
+## Upload the photo to OneDrive and get a sharing link
+
+Next we'll implement the code behind the **Send** button. When the user clicks **Send**, the app will:
+
+- Upload the file to OneDrive
+- Generate a sharing link for anyone in the user's organization to view the file
+- Create a message that:
+  - Has the selected person on the **To** line
+  - Has the profile picture inserted inline in the body of the email
+  - Has the sharing link in the body of the email
+
+Replace the existing `SendMail` function with the following:
 
 ```csharp
-protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+async void SendMail(object sender, EventArgs e)
 {
-    base.OnActivityResult(requestCode, resultCode, data);
-    AuthenticationContinuationHelper.SetAuthenticationContinuationEventArgs(requestCode,
-        resultCode,
-        data);
+    ShowProgress("Getting profile photo");
+
+    try
+    {
+        // Upload the profile pic to OneDrive
+        var photoStream = await GetUserPhoto();
+
+        // Copy to memory stream
+        MemoryStream memStream = new MemoryStream();
+        photoStream.CopyTo(memStream);
+
+        // Get the bytes
+        var photoBytes = memStream.ToArray();
+
+        UpdateProgress("Uploading photo to OneDrive");
+        var uploadedPhoto = await App.GraphClient.Me.Drive.Root.ItemWithPath("ProfilePhoto.png")
+            .Content.Request().PutAsync<DriveItem>(new MemoryStream(photoBytes));
+
+        // Generate a sharing link
+        UpdateProgress("Generating sharing link");
+        var sharingLink = await App.GraphClient.Me.Drive.Items[uploadedPhoto.Id]
+            .CreateLink("view", "organization").Request().PostAsync();
+    }
+    catch(ServiceException ex)
+    {
+        await DisplayAlert("A Graph error occurred", ex.Message, "Dismiss");
+    }
+    finally
+    {
+        HideProgress();
+    }
 }
 ```
 
-Finally, add the following line to the end of the `OnCreate` function:
+Let's take a look at what that code does.
+
+- It gets the user's photo from Graph, then reads all of the bytes out of the resulting stream.
+- It uploads the bytes to **ProfilePhoto.png** in the root of the user's OneDrive. Note that this overwrites any existing file with that name that might be there.
+- It uses the `Id` property of the returned `DriveItem` to make another call to the Graph to create a sharing link.
+
+Let's move on to sending the message.
+
+## Send the message
+
+Add the following code to the `SendMail` function just after the lines that create the sharing link:
 
 ```csharp
-App.AuthUiParent = new UIParent(this);
-```
+// Create a recipient from the selected Person object
+var selectedRecipient = pickerRecipient.SelectedItem as Person;
 
-## Running on iOS
-
-MSAL requires additional configuration in the iOS project to work properly. This is documented at https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/wiki/Xamarin-ios-specificities.
-
-> **NOTE:** There is currently a bug with MSAL on iOS that results in the user's tokens not persisting to the cache. The bug is reported here: https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/issues/546
-
-First, we need to specify that our app handles the `msal[APP ID HERE]` URL type. When the oAuth login process finishes, it redirects to this URL, and the app needs to receive that redirect. Open the **./PhotoSender.iOS/Info.plist** file in Visual Studio, then select the **Advanced** tab. Locate the **URL Types** section and click **Add URL Type**, and fill in the fields as follows:
-
-- **Identifier**: `com.yourcompany.PhotoSender`
-- **URL Schemes**: `msal[APP ID HERE]` (Replace `[APP ID HERE]` with your app ID from the app registration portal.)
-- **Role**: `Editor`
-- **Icon**: Leave blank
-
-Next, we need to add a handler for opening that URL type that forwards the information back to the MSAL library. Open the **./PhotoSender.iOS/AppDelegate.cs** file and add the following `using` statement at the top of the file:
-
-```csharp
-using Microsoft.Identity.Client;
-```
-
-Then add the following function to the `AppDelegate` class:
-
-```csharp
-public override bool OpenUrl(UIApplication app, NSUrl url, NSDictionary options)
+var recipient = new Recipient()
 {
-    AuthenticationContinuationHelper.SetAuthenticationContinuationEventArgs(url);
-    return true;
-}
+    EmailAddress = new EmailAddress()
+    {
+        Name = selectedRecipient.DisplayName,
+        Address = selectedRecipient.ScoredEmailAddresses.FirstOrDefault().Address
+    }
+};
+
+// Create the email message
+var message = new Message()
+{
+    Subject = "Check out my profile photo",
+    ToRecipients = new List<Recipient>() { recipient },
+    Body = new ItemBody()
+    {
+        ContentType = BodyType.Html
+    },
+    Attachments = new MessageAttachmentsCollectionPage()
+};
+
+// Attach profile pic and add as inline
+message.Attachments.Add(new FileAttachment()
+{
+    ODataType = "#microsoft.graph.fileAttachment",
+    ContentBytes = photoBytes,
+    ContentType = "image/png",
+    Name = "ProfilePhoto.png",
+    IsInline = true
+});
+
+message.Body.Content = $@"<html><head>
+<meta http-equiv='Content-Type' content='text/html; charset=us-ascii'>
+</head>
+<body style='font-family:calibri'>
+<h2>Hello, {selectedRecipient.GivenName}!</h2>
+<p>This is a message from the PhotoSender app.What do you think of my profile picture?</p>
+<img src=""cid:ProfilePhoto.png""></img>
+<p>You can also <a href=""{sharingLink.Link.WebUrl}"" >view it on my OneDrive</a>.</p>
+</body></html>";
+
+UpdateProgress("Sending message");
+// Send the message
+await App.GraphClient.Me.SendMail(message, true).Request().PostAsync();
+
+await DisplayAlert("Success", "Message sent", "OK");
 ```
+
+Let's take a look at that code.
+
+- It gets the selected `Person` object from the Picker, and uses the properties of that object to create a Graph `Recipient` object.
+- It creates a Graph `Message`, with the recipient on the **To** line.
+- It adds the photo as an attachment, with `IsInline = true`. This flag causes the attachment to not display as a normal attachment.
+- It sets the HTML body of the message, referring to the attached photo as the source for an `<img>` tag, and inserting the sharing link.
+- It sends the mail and saves a copy to the user's Sent Items folder.
+
+## Try it out
+
+Run the app. In the dropdown, select the logged on user (so that you send the mail to yourself). Click **Send**.
+
+Once you see the **Message sent** message, open your browser and go to https://outlook.office.com. Sign in as the user and open the message.
+
+![A screenshot of the message sent by the app](https://github.com/microsoftgraph/xamarin-csharp-photosender-sample/blob/master/readme-images/app-email.PNG)
