@@ -378,7 +378,9 @@ Let's replace the temporary UI for the main page with something more useful. Ope
 </ContentPage>
 ```
 
-Now let's update the code for this new UI. Open **MainPage.xaml.cs** and add the following functions to the `MainPage` class:
+Now let's update the code for this new UI.
+
+1. Open **MainPage.xaml.cs** and add the following functions to the `MainPage` class:
 
 ```csharp
 async void OnUserTapped(object sender, EventArgs e)
@@ -427,6 +429,8 @@ void HideProgress()
     mainView.IsVisible = true;
 }
 ```
+
+1. Update the existing `SignOut` function to take no parameters. Replace the line `async void SignOut(object sender, EventArgs e)` with `async void SignOut()`.
 
 Now let's move on to filling in this new UI with information from the Graph.
 
