@@ -13,10 +13,10 @@ In this session, we'll build a cross-platform mobile application that uses the M
 1. Open Visual Studio, then choose the **File** menu, then **New**, then **Project...**.
 
 1. Choose the **Mobile App (Xamarin.Forms)** project template (located under **Visual C#**, **Cross-Platform**). Name the app **PhotoSender** and choose **OK**.
-    ![A screenshot of the New Project dialog with the Mobile App (Xamarin.Forms) template selected](https://raw.githubusercontent.com/microsoftgraph/xamarin-csharp-photosender-sample/blob/master/readme-images/select-template.PNG)
+    ![A screenshot of the New Project dialog with the Mobile App (Xamarin.Forms) template selected](https://raw.githubusercontent.com/microsoftgraph/xamarin-csharp-photosender-sample/master/readme-images/select-template.PNG)
 
 1. Choose the **Blank App** template. Under **Code Sharing Strategy**, select **.NET Standard**. Choose **OK**.
-    ![A screenshot of the New Cross Platform App dialog](https://raw.githubusercontent.com/microsoftgraph/xamarin-csharp-photosender-sample/blob/master/readme-images/cross-platform-options.PNG)
+    ![A screenshot of the New Cross Platform App dialog](https://raw.githubusercontent.com/microsoftgraph/xamarin-csharp-photosender-sample/master/readme-images/cross-platform-options.PNG)
 
 Visual Studio will create three projects in the solution:
 
@@ -289,9 +289,9 @@ Let's take a quick look at what we did here.
 
 You should be able to run the app and log in, view the access token, and log out.
 
-![A screenshot of the sign in screen](https://raw.githubusercontent.com/microsoftgraph/xamarin-csharp-photosender-sample/blob/master/readme-images/sign-in-screen.PNG)
+![A screenshot of the sign in screen](https://raw.githubusercontent.com/microsoftgraph/xamarin-csharp-photosender-sample/master/readme-images/sign-in-screen.PNG)
 
-![A screenshot of the main page showing the access token](https://raw.githubusercontent.com/microsoftgraph/xamarin-csharp-photosender-sample/blob/master/readme-images/main-page-token.PNG)
+![A screenshot of the main page showing the access token](https://raw.githubusercontent.com/microsoftgraph/xamarin-csharp-photosender-sample/master/readme-images/main-page-token.PNG)
 
 ## Set up the Graph client
 
@@ -455,7 +455,7 @@ Our first task will be to get the user's information and profile photo to fill i
     }
     ```
 
-1. Download the **no-profile-pic.png** file from [here](https://raw.githubusercontent.com/microsoftgraph/xamarin-csharp-photosender-sample/blob/master/PhotoSender/PhotoSender/no-profile-pic.png) and save it in the **./PhotoSender** directory. Right-click the **PhotoSender** project and choose **Add**, **Existing Item...**. Browse to **no-profile-pic.png** and choose **Add**.
+1. Download the **no-profile-pic.png** file from [here](https://raw.githubusercontent.com/microsoftgraph/xamarin-csharp-photosender-sample/master/PhotoSender/PhotoSender/no-profile-pic.png) and save it in the **./PhotoSender** directory. Right-click the **PhotoSender** project and choose **Add**, **Existing Item...**. Browse to **no-profile-pic.png** and choose **Add**.
 
 1. Right-click **no-profile-pic.png** in **Solution Explorer** and choose **Properties**. Change **Build Action** to `Embedded resource` and choose **OK**.
 
@@ -497,7 +497,7 @@ Let's take a look at what that does.
 
 Run the app to test this code. You should get a result something like the following:
 
-![A screenshot of the app](https://raw.githubusercontent.com/microsoftgraph/xamarin-csharp-photosender-sample/blob/master/readme-images/user-profile-photo.PNG)
+![A screenshot of the app](https://raw.githubusercontent.com/microsoftgraph/xamarin-csharp-photosender-sample/master/readme-images/user-profile-photo.PNG)
 
 ## Choosing a recipient
 
@@ -523,7 +523,7 @@ Let's take a look at this code.
 
 If you run the app now, you should be able to click the dropdown and see a list of people to choose from.
 
-![A screenshot of the app](https://raw.githubusercontent.com/microsoftgraph/xamarin-csharp-photosender-sample/blob/master/readme-images/people-picker.PNG)
+![A screenshot of the app](https://raw.githubusercontent.com/microsoftgraph/xamarin-csharp-photosender-sample/master/readme-images/people-picker.PNG)
 
 ## Upload the photo to OneDrive and get a sharing link
 
@@ -653,4 +653,4 @@ Run the app. In the dropdown, select the logged on user (so that you send the ma
 
 Once you see the **Message sent** message, open your browser and go to https://outlook.office.com. Sign in as the user and open the message.
 
-![A screenshot of the message sent by the app](https://raw.githubusercontent.com/microsoftgraph/xamarin-csharp-photosender-sample/blob/master/readme-images/app-email.PNG)
+![A screenshot of the message sent by the app](https://raw.githubusercontent.com/microsoftgraph/xamarin-csharp-photosender-sample/master/readme-images/app-email.PNG)
