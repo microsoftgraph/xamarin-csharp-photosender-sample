@@ -205,7 +205,7 @@ namespace PhotoSender
                 App.PCA.Remove(user);
             }
 
-            // Show the sigin UI
+            // Show the signin UI
             await Navigation.PushModalAsync(new SignInPage(), true);
         }
     }
