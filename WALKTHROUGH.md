@@ -8,6 +8,17 @@ In this session, we'll build a cross-platform mobile application that uses the M
 - Visual Studio 2017 version 15.6.6 with the Xamarin workload installed
 - Android SDK for Android 7.1 and Android Emulator (installed via the [Android SDK Manager in Visual Studio](https://docs.microsoft.com/en-us/xamarin/android/get-started/installation/android-sdk?tabs=vswin))
 
+## Update the user
+
+For this workshop we'll be using the Office 365 users provided with the lab. You can find the account names and password on the **Resources** tab of the lab instructions.
+
+Because we'll be working with the user's profile photo, you'll need to upload one.
+
+1. Download the profile photo from [GitHub](https://github.com/microsoftgraph/xamarin-csharp-photosender-sample/blob/master/profile-pic.png).
+1. Open your browser and go to [https://outlook.office.com](https://outlook.office.com). Sign in with your Office 365 credentials.
+1. Click the user avatar in the top right corner of the page, then click the empty avatar next to the user's name and email address to change the user's photo.
+1. Click the **Browse** button and browse to the profile photo. Once the photo is uploaded, click **Save**.
+
 ## Create the app
 
 1. Open Visual Studio, then choose the **File** menu, then **New**, then **Project...**.
@@ -18,7 +29,7 @@ In this session, we'll build a cross-platform mobile application that uses the M
 1. Choose the **Blank App** template. Under **Code Sharing Strategy**, select **.NET Standard**. Choose **OK**.
     ![A screenshot of the New Cross Platform App dialog](https://raw.githubusercontent.com/microsoftgraph/xamarin-csharp-photosender-sample/master/readme-images/cross-platform-options.PNG)
 
-Visual Studio will create three projects in the solution:
+Visual Studio will create four projects in the solution:
 
 - **PhotoSender** - This is the .NET Standard library that will hold all of the shared code and UI.
 - **PhotoSender.Android** - This project implements the Android version of the application and contains any Android-specific code.
