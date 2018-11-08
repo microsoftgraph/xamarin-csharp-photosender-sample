@@ -25,8 +25,9 @@ namespace PhotoSender
                 // Try to *silently* get a token
                 // Silent here means without prompting the user to login.
                 // This will only work if we have a previously cached token
+                var accounts = await App.PCA.GetAccountsAsync();
                 var result = await App.PCA.AcquireTokenSilentAsync(App.AppScopes,
-                    App.PCA.Users.FirstOrDefault());
+                    accounts.FirstOrDefault());
 
                 // Get the user's name from the Graph
                 var user = await App.GraphClient.Me.Request()
@@ -200,9 +201,10 @@ namespace PhotoSender
 
         async void SignOut()
         {
-            foreach(var user in App.PCA.Users)
+            var accounts = await App.PCA.GetAccountsAsync();
+            foreach(var account in accounts)
             {
-                App.PCA.Remove(user);
+                await App.PCA.RemoveAsync(account);
             }
 
             // Show the signin UI

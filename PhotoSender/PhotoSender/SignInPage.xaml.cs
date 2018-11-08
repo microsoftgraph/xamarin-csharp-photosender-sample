@@ -37,11 +37,13 @@ namespace PhotoSender
             {
                 try
                 {
+
                     // Try to *silently* get a token
                     // Silent here means without prompting the user to login.
                     // This will only work if we have a previously cached token
+                    var accounts = await App.PCA.GetAccountsAsync();
                     var result = await App.PCA.AcquireTokenSilentAsync(App.AppScopes,
-                        App.PCA.Users.FirstOrDefault());
+                        accounts.FirstOrDefault());
 
                     // Since we're already logged in, proceed to main page
                     await Navigation.PushModalAsync(new NavigationPage(new MainPage()), true);

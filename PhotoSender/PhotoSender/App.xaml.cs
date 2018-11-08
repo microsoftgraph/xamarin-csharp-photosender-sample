@@ -28,8 +28,9 @@ namespace PhotoSender
             GraphClient = new GraphServiceClient(new DelegateAuthenticationProvider(
                 async (request) =>
                 {
+                    var accounts = await PCA.GetAccountsAsync();
                     // Get token silently from MSAL
-                    var authResult = await PCA.AcquireTokenSilentAsync(AppScopes, PCA.Users.FirstOrDefault());
+                    var authResult = await PCA.AcquireTokenSilentAsync(AppScopes, accounts.FirstOrDefault());
 
                     // Add the access token to the "Authorization" header
                     request.Headers.Authorization =
