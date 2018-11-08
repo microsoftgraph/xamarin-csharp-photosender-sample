@@ -2,9 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;UWP</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UWP|AnyCPU'">
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
