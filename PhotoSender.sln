@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoSender.iOS", "PhotoSen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoSender.UWP", "PhotoSender\PhotoSender.UWP\PhotoSender.UWP.csproj", "{7C656E5C-A0C3-4FA9-A23E-45599AB55502}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoSender", "PhotoSender\PhotoSender\PhotoSender.csproj", "{08F77345-CD40-42F9-B6E4-B7FA801A10C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhotoSender", "PhotoSender\PhotoSender\PhotoSender.csproj", "{08F77345-CD40-42F9-B6E4-B7FA801A10C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
