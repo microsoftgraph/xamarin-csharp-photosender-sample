@@ -13,7 +13,7 @@ namespace PhotoSender
     public partial class App : Application
     {
         public static PublicClientApplication PCA;
-        public static string AppId = "[APP ID HERE]";
+        public static string AppId = "[APP_ID_HERE]";
         public static string[] AppScopes = { "User.Read", "Mail.Read", "Mail.Send", "Files.ReadWrite", "People.Read" };
         public static UIParent AuthUiParent = null;
         public static bool PendingAuth = false;

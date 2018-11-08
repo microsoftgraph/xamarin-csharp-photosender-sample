@@ -147,7 +147,7 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
     <ProjectReference Include="..\PhotoSender\PhotoSender.csproj">
-      <Project>{EA32DD80-A238-482C-AECE-84CF8DD6BBC1}</Project>
+      <Project>{08F77345-CD40-42F9-B6E4-B7FA801A10C7}</Project>
       <Name>PhotoSender</Name>
     </ProjectReference>
   </ItemGroup>
