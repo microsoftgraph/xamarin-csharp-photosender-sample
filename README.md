@@ -1,5 +1,35 @@
+# Xamarin Forms Microsoft Graph Sample
 
-# Contributing
+## Configure the sample
+
+### Register a native application in the App Registration Portal
+
+1. Open a browser and navigate to the [Application Registration Portal](https://apps.dev.microsoft.com) and login using a **personal account** (aka: Microsoft Account) or **Work or School Account**.
+
+1. Select **Add an app** at the top of the page.
+
+    > **Note:** If you see more than one **Add an app** button on the page, select the one that corresponds to the **Converged apps** list.
+
+1. On the **Register your application** page, set the **Application Name** to **Xamarin PhotoSender** and select **Create**.
+
+1. On the **Xamarin PhotoSender Registration** page, under the **Properties** section, copy the **Application Id** as you will need it later.
+
+1. Scroll down to the **Platforms** section.
+
+    1. Select **Add Platform**.
+    1. In the **Add Platform** dialog, select **Native Application**.
+
+1. Scroll to the bottom of the page and select **Save**.
+
+### Add the application ID to the project
+
+Replace the text `[APP_ID_HERE]` in the following files.
+
+- [App.xaml.cs](./PhotoSender/PhotoSender/App.xaml.cs): Required for all platforms
+- [AndroidManifest.xml](./PhotoSender/PhotoSender.Android/Properties/AndroidManifest.xml): Only required if building the Android version of the app
+- [Info.plist](./PhotoSender/PhotoSender.iOS/Info.plist): Only required if building the iOS version of the app
+
+## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
