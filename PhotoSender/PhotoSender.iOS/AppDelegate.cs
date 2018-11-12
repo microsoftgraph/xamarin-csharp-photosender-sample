@@ -25,14 +25,13 @@ namespace PhotoSender.iOS
         {
             global::Xamarin.Forms.Forms.Init();
             LoadApplication(new App());
-
+            App.AuthUiParent = new UIParent();
             return base.FinishedLaunching(app, options);
         }
 
         public override bool OpenUrl(UIApplication app, NSUrl url, NSDictionary options)
         {
-            AuthenticationContinuationHelper.SetAuthenticationContinuationEventArgs(url);
-            return true;
+            return AuthenticationContinuationHelper.SetAuthenticationContinuationEventArgs(url);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace PhotoSender
     public partial class App : Application
     {
         public static PublicClientApplication PCA;
-        public static string AppId = "[APP ID HERE]";
+        public static string AppId = "[APP_ID_HERE]";
         public static string[] AppScopes = { "User.Read", "Mail.Read", "Mail.Send", "Files.ReadWrite", "People.Read" };
         public static UIParent AuthUiParent = null;
         public static bool PendingAuth = false;
@@ -28,8 +28,9 @@ namespace PhotoSender
             GraphClient = new GraphServiceClient(new DelegateAuthenticationProvider(
                 async (request) =>
                 {
+                    var accounts = await PCA.GetAccountsAsync();
                     // Get token silently from MSAL
-                    var authResult = await PCA.AcquireTokenSilentAsync(AppScopes, PCA.Users.FirstOrDefault());
+                    var authResult = await PCA.AcquireTokenSilentAsync(AppScopes, accounts.FirstOrDefault());
 
                     // Add the access token to the "Authorization" header
                     request.Headers.Authorization =
