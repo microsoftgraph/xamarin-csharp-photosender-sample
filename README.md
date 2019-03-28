@@ -4,22 +4,21 @@
 
 ### Register a native application in the App Registration Portal
 
-1. Open a browser and navigate to the [Application Registration Portal](https://apps.dev.microsoft.com) and login using a **personal account** (aka: Microsoft Account) or **Work or School Account**.
+1. Open a browser and navigate to the [Azure portal – App registrations](https://go.microsoft.com/fwlink/?linkid=2083908) and login using a **personal account** (aka: Microsoft Account) or **Work or School Account**.
+1. Select **New registration**. 
 
-1. Select **Add an app** at the top of the page.
+    ![A screenshot of the App registrations ](readme-images/aad-portal-app-registrations.png)
 
-    > **Note:** If you see more than one **Add an app** button on the page, select the one that corresponds to the **Converged apps** list.
+1. When the **Register an application page** appears, enter your application's registration information: 
+    - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `Xamarin PhotoSender`. 
+    - In the **Supported account types** section, select **Accounts in any organizational directory**. 
 
-1. On the **Register your application** page, set the **Application Name** to **Xamarin PhotoSender** and select **Create**.
+    ![A screenshot of the Register an application page](readme-images/aad-register-an-app.png)
 
-1. On the **Xamarin PhotoSender Registration** page, under the **Properties** section, copy the **Application Id** as you will need it later.
+1. Select **Register** to create the application. 
+1. On the app **Overview** page, find the **Application (client) ID** value and record it for later. You'll need it to configure the App. Id for this project. 
 
-1. Scroll down to the **Platforms** section.
-
-    1. Select **Add Platform**.
-    1. In the **Add Platform** dialog, select **Native Application**.
-
-1. Scroll to the bottom of the page and select **Save**.
+    ![A screenshot of the application ID of the new app registration](readme-images/aad-application-id.PNG)
 
 ### Add the application ID to the project
 
@@ -42,3 +41,7 @@ provided by the bot. You will only need to do this once across all repos using o
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+## Copyright
+
+Copyright (c) 2019 Microsoft. All rights reserved.
