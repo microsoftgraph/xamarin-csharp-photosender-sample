@@ -7,13 +7,13 @@
 1. Open a browser and navigate to the [Azure portal – App registrations](https://go.microsoft.com/fwlink/?linkid=2083908) and login using a **personal account** (aka: Microsoft Account) or **Work or School Account**.
 1. Select **New registration**. 
 
-    ![A screenshot of the App registrations ](readme-images/aad-portal-app-registrations.png)
+    ![A screenshot of the App registrations ](readme-images/aad-portal-app-registrations.PNG)
 
 1. When the **Register an application page** appears, enter your application's registration information: 
     - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `Xamarin PhotoSender`. 
     - In the **Supported account types** section, select **Accounts in any organizational directory**. 
 
-    ![A screenshot of the Register an application page](readme-images/aad-register-an-app.png)
+    ![A screenshot of the Register an application page](readme-images/aad-register-an-app.PNG)
 
 1. Select **Register** to create the application. 
 1. On the app **Overview** page, find the **Application (client) ID** value and record it for later. You'll need it to configure the App. Id for this project. 
