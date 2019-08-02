@@ -1,3 +1,21 @@
+---
+page_type: sample
+products:
+- office-outlook
+- ms-graph
+languages:
+- csharp
+extensions:
+  contentType: samples
+  technologies:
+  - Microsoft Graph
+  services:
+  - Outlook
+  - Users
+  platforms:
+  - Xamarin
+  createdDate: 4/26/2018 1:35:59 PM
+---
 # Xamarin Forms Microsoft Graph Sample
 
 ## Configure the sample
