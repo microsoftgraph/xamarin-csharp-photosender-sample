@@ -10,7 +10,7 @@ extensions:
   technologies:
   - Microsoft Graph
   services:
-  - Outlook
+  - Outlook 
   - Users
   platforms:
   - Xamarin
