@@ -5,6 +5,7 @@ products:
 - ms-graph
 languages:
 - csharp
+description: "A sample Xamarin Forms app that uses the Microsoft Graph"
 extensions:
   contentType: samples
   technologies:
