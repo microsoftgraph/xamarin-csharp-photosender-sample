@@ -1,23 +1,10 @@
----
-page_type: sample
-products:
-- office-outlook
-- ms-graph
-languages:
-- csharp
-description: "A sample Xamarin Forms app that uses the Microsoft Graph"
-extensions:
-  contentType: samples
-  technologies:
-  - Microsoft Graph
-  services:
-  - Outlook 
-  - Users
-  platforms:
-  - Xamarin
-  createdDate: 4/26/2018 1:35:59 PM
----
-# Xamarin Forms Microsoft Graph Sample
+# [ARCHIVED] Xamarin Forms Microsoft Graph Sample
+
+## IMPORTANT
+
+**This project is being archived and replaced with the [Build Xamarin apps with the Microsoft Graph SDK training](https://github.com/microsoftgraph/msgraph-training-xamarin). As part of the archival process, we're closing all open issues and pull requests.**
+
+**You can continue to use this sample "as-is", but it won't be maintained moving forward. We apologize for any inconvenience.**
 
 ## Configure the sample
 
